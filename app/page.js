@@ -1,5 +1,6 @@
 import Greeting from '@/components/Greeting';
+import { getGeneralWish } from '@/lib/generalWish';
 
 export default function Page() {
-  return <Greeting />;
+  return <Greeting generalWish={getGeneralWish()} />;
 }

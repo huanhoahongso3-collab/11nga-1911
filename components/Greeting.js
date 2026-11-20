@@ -11,7 +11,7 @@ import Balloons from './Balloons';
 import { PastelAudio } from '@/lib/audio';
 import { PastelFireworks, triggerOpeningCelebration, clearCelebrationTimers } from '@/lib/fireworks';
 
-export default function Greeting() {
+export default function Greeting({ generalWish }) {
   const [person, setPerson] = useState(null);
   const [hasOpened, setHasOpened] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
@@ -105,6 +105,7 @@ export default function Greeting() {
         {person ? (
           <CardStep
             person={person}
+            generalWish={generalWish}
             musicOn={musicOn}
             onBack={backToWelcome}
             onToggleMusic={toggleMusic}

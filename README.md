@@ -19,6 +19,7 @@ Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). K
 - `app/page.js`, `app/layout.js`: trang và font
 - `app/api/wish/route.js`: serverless function, kiểm tra tên rồi gọi AI (key chỉ nằm ở server)
 - `components/`: màn hình nhập tên, thiệp, lời chúc riêng, mã QR
+- `lib/generalWish.js`: lời chúc chung mặc định, đổi bằng biến `GENERAL_WISH` (tùy chọn, không đặt thì giữ nguyên)
 - `lib/names.js`: luật tên hợp lệ (từ cuối của họ tên hoặc họ tên đầy đủ), dùng chung client và server
 - `lib/ai.js`: gọi proxy CYO, dự phòng Claude
 - `lib/profiles.js`: dữ liệu từng bạn và prompt (chỉ server)

@@ -3,7 +3,12 @@
 import PersonalCard from './PersonalCard';
 import { launchExtraCelebration } from '@/lib/fireworks';
 
-export default function CardStep({ person, musicOn, onBack, onToggleMusic, showToast }) {
+// **chữ** thành chữ in đậm.
+function renderBold(text) {
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
+}
+
+export default function CardStep({ person, generalWish, musicOn, onBack, onToggleMusic, showToast }) {
   return (
     <section className="space-y-7 sm:space-y-8 animate-reveal">
       <header
@@ -66,18 +71,9 @@ export default function CardStep({ person, musicOn, onBack, onToggleMusic, showT
         </div>
 
         <div className="bg-cream rounded-2xl p-5 sm:p-6 border border-dashed border-ink/15 space-y-3 text-sm sm:text-base leading-relaxed text-ink font-medium">
-          <p>
-            Chúc mừng ngày Quốc tế Nam giới 19/11 tới toàn thể các chàng trai của đại gia đình <strong>11 Nga</strong>! 🥳
-          </p>
-          <p>
-            Cảm ơn các cậu vì suốt thời gian qua đã luôn nhiệt tình, ga-lăng và sẵn sàng gánh vác mọi việc nặng nhọc cùng hội
-            con gái — từ kê bàn ghế, trực nhật cho đến những pha quăng miếng hài hước cứu cả lớp khỏi những tiết học căng
-            thẳng.
-          </p>
-          <p>
-            Năm lớp 11 bận rộn nhưng chắc chắn sẽ thật đáng nhớ khi có các cậu đồng hành. Chúc các bạn nam 11 Nga luôn khỏe
-            mạnh, học tập thật tốt, giữ vững phong độ đỉnh cao và lúc nào cũng rạng rỡ, vui vẻ nhé! 💙
-          </p>
+          {generalWish.map((paragraph, i) => (
+            <p key={i}>{renderBold(paragraph)}</p>
+          ))}
         </div>
       </article>
 
