@@ -14,7 +14,13 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
 
   function fail(message) {
     setError(message);
-    inputRef.current?.focus();
+    const input = inputRef.current;
+    if (input) {
+      input.classList.remove('animate-shake');
+      void input.offsetWidth;
+      input.classList.add('animate-shake');
+      input.focus();
+    }
   }
 
   function handleSubmit(event) {
@@ -45,24 +51,30 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
           <path d="M12 2l2.8 6.1 6.7.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.1 1.3-6.6-4.9-4.6 6.7-.8L12 2z" />
         </svg>
 
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-butter border-2 border-butterBorder text-ink text-xs sm:text-sm font-bold mb-5">
-          <span>🍀</span>
+        <div
+          className="animate-rise inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-butter border-2 border-butterBorder text-ink text-xs sm:text-sm font-bold mb-5"
+          style={{ '--d': '60ms' }}
+        >
+          <span className="animate-bob">🍀</span>
           <span>19/11 • Lớp 11 Nga</span>
         </div>
 
-        <h1 className="font-hand text-3xl sm:text-5xl text-ink leading-tight mb-3">
+        <h1 className="animate-rise font-hand text-3xl sm:text-5xl text-ink leading-tight mb-3" style={{ '--d': '160ms' }}>
           Gửi các chàng trai{' '}
           <span className="inline-block bg-mintSoft px-3 py-0.5 rounded-2xl border-2 border-mintBorder transform -rotate-1">
             11 Nga
           </span>
         </h1>
 
-        <p className="max-w-md mx-auto text-inkLight text-sm sm:text-base leading-relaxed font-medium mb-7">
+        <p
+          className="animate-rise max-w-md mx-auto text-inkLight text-sm sm:text-base leading-relaxed font-medium mb-7"
+          style={{ '--d': '260ms' }}
+        >
           Hội con gái 11 Nga đã chuẩn bị sẵn một tấm thiệp nhỏ xinh dành riêng cho cậu. Nhập tên gọi của cậu (từ cuối của
           họ tên) hoặc họ tên đầy đủ để mở thiệp nhé!
         </p>
 
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3.5" noValidate>
+        <form onSubmit={handleSubmit} className="animate-rise max-w-md mx-auto space-y-3.5" style={{ '--d': '360ms' }} noValidate>
           <input
             ref={inputRef}
             type="text"
@@ -90,13 +102,15 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
 
           <button
             type="submit"
-            className="btn-sticker w-full py-3.5 px-6 rounded-2xl bg-peachSoft hover:bg-peachBorder/75 text-ink font-bold text-base sm:text-lg border-2 border-peachBorder shadow-[0_5px_0_#F3BE9C] flex items-center justify-center gap-2"
+            className="btn-sticker cta-pulse w-full py-3.5 px-6 rounded-2xl bg-peachSoft hover:bg-peachBorder/75 text-ink font-bold text-base sm:text-lg border-2 border-peachBorder shadow-[0_5px_0_#F3BE9C] flex items-center justify-center gap-2"
           >
             <span>Mở thiệp 19/11 ✨</span>
           </button>
         </form>
 
-        <p className="mt-6 text-xs text-inkLight font-semibold">From tập thể nữ 11 Nga với thật nhiều yêu thương ♥</p>
+        <p className="animate-rise mt-6 text-xs text-inkLight font-semibold" style={{ '--d': '460ms' }}>
+          From tập thể nữ 11 Nga với thật nhiều yêu thương ♥
+        </p>
       </div>
     </section>
   );

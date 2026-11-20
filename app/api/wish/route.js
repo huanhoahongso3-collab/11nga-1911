@@ -1,10 +1,9 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { findPerson } from '@/lib/names';
 import { getProfile, buildPrompt } from '@/lib/profiles';
+import { aiConfigured, generateText } from '@/lib/ai';
 
 export const maxDuration = 30;
 
-const MODEL = process.env.WISH_MODEL || 'claude-opus-5-5';
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 10;
 const hits = new Map();
@@ -42,35 +41,12 @@ export async function POST(request) {
   const profile = person ? getProfile(person.full) : null;
   if (!person || !profile) return reply({ error: 'invalid_name' }, 400);
 
-  if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
-    return reply({ text: profile.fallback, source: 'fallback' });
-  }
+  if (!aiConfigured()) return reply({ text: profile.fallback, source: 'fallback', reason: 'no_key' });
 
   try {
-    const client = new Anthropic();
-    const response = await client.beta.messages.create({
-      model: MODEL,
-      max_tokens: 2000,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: { effort: 'low' },
-      messages: [{ role: 'user', content: buildPrompt(person, profile) }],
-    });
-
-    if (response.stop_reason === 'refusal') throw new Error('refusal');
-
-    const text = response.content
-      .filter((block) => block.type === 'text')
-      .map((block) => block.text)
-      .join('')
-      .trim()
-      .replace(/^["“”]+|["“”]+$/g, '')
-      .trim();
-    if (!text) throw new Error('empty');
-
+    const text = await generateText(buildPrompt(person, profile));
     return reply({ text, source: 'ai' });
-  } catch (error) {
-    console.error('wish generation failed:', error instanceof Anthropic.APIError ? `${error.status} ${error.message}` : error);
-    return reply({ text: profile.fallback, source: 'fallback' });
+  } catch {
+    return reply({ text: profile.fallback, source: 'fallback', reason: 'ai_error' });
   }
 }

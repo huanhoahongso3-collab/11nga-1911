@@ -6,7 +6,10 @@ import { launchExtraCelebration } from '@/lib/fireworks';
 export default function CardStep({ person, musicOn, onBack, onToggleMusic, showToast }) {
   return (
     <section className="space-y-7 sm:space-y-8 animate-reveal">
-      <header className="paper-card-butter rounded-2xl px-4 sm:px-5 py-3.5 flex flex-wrap items-center justify-between gap-2.5">
+      <header
+        className="animate-rise paper-card-butter rounded-2xl px-4 sm:px-5 py-3.5 flex flex-wrap items-center justify-between gap-2.5"
+        style={{ '--d': '0ms' }}
+      >
         <button
           type="button"
           onClick={onBack}
@@ -25,7 +28,16 @@ export default function CardStep({ person, musicOn, onBack, onToggleMusic, showT
                 : 'bg-white border-ink/20 shadow-[0_3px_0_#A9DFB1]'
             }`}
           >
-            <span>{musicOn ? '🔊' : '🔇'}</span>
+            {musicOn ? (
+              <span className="eq" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+                <i />
+              </span>
+            ) : (
+              <span>🔇</span>
+            )}
             <span>{musicOn ? 'Đang phát nhạc' : 'Bật nhạc'}</span>
           </button>
 
@@ -40,7 +52,7 @@ export default function CardStep({ person, musicOn, onBack, onToggleMusic, showT
         </div>
       </header>
 
-      <article className="paper-card rounded-3xl p-6 sm:p-8 relative">
+      <article className="animate-rise paper-card rounded-3xl p-6 sm:p-8 relative" style={{ '--d': '140ms' }}>
         <div className="washi-tape washi-tape-peach" />
 
         <div className="flex items-center gap-3 mb-4 pt-1">
@@ -69,7 +81,9 @@ export default function CardStep({ person, musicOn, onBack, onToggleMusic, showT
         </div>
       </article>
 
-      <PersonalCard person={person} showToast={showToast} onCelebrate={launchExtraCelebration} />
+      <div className="animate-pop" style={{ '--d': '300ms' }}>
+        <PersonalCard person={person} showToast={showToast} onCelebrate={launchExtraCelebration} />
+      </div>
     </section>
   );
 }

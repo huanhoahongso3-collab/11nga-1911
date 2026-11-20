@@ -5,6 +5,7 @@ import WelcomeCard from './WelcomeCard';
 import CardStep from './CardStep';
 import QrPanel from './QrPanel';
 import Toast from './Toast';
+import Ambient from './Ambient';
 import { PastelAudio } from '@/lib/audio';
 import { PastelFireworks, triggerOpeningCelebration, clearCelebrationTimers } from '@/lib/fireworks';
 
@@ -72,9 +73,10 @@ export default function Greeting() {
   return (
     <>
       <Toast {...toast} />
+      <Ambient />
       <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-40" />
 
-      <main className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12 my-auto">
+      <main className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12 my-auto">
         {person ? (
           <CardStep
             person={person}
