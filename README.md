@@ -20,6 +20,7 @@ Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). K
 - `app/api/wish/route.js`: serverless function, kiểm tra tên rồi gọi AI (key chỉ nằm ở server)
 - `components/`: màn hình nhập tên, thiệp, lời chúc riêng, mã QR
 - `lib/generalWish.js`: lời chúc chung mặc định, đổi bằng biến `GENERAL_WISH` (tùy chọn, không đặt thì giữ nguyên)
+- `lib/share.js`: ID chia sẻ có chữ ký (chứa luôn lời chúc), dùng cho mã QR trên ảnh xuất ra và trang `/w/[id]` chỉ để xem
 - `lib/names.js`: luật tên hợp lệ (từ cuối của họ tên hoặc họ tên đầy đủ), dùng chung client và server
 - `lib/ai.js`: gọi proxy CYO, dự phòng Claude
 - `lib/profiles.js`: dữ liệu từng bạn và prompt (chỉ server)
@@ -28,3 +29,5 @@ Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). K
 ## Deploy
 
 Vercel hoặc Netlify: import repo, đặt biến `CYO_AI_API` và/hoặc `ANTHROPIC_API_KEY` (tùy chọn `WISH_MODEL`, mặc định `claude-opus-5-5`).
+
+Ảnh thiệp tải về có mã QR mở trang `/w/<id>` (chỉ hiện đúng lời chúc, không có nút nào). ID chứa lời chúc đã nén và ký bằng `SHARE_SECRET` (nếu không đặt thì dùng khóa AI), nên không cần database. Đổi khóa ký thì các mã QR cũ không mở được nữa.

@@ -1,6 +1,7 @@
 import { findPerson } from '@/lib/names';
 import { getProfile, buildPrompt } from '@/lib/profiles';
 import { aiConfigured, generateText } from '@/lib/ai';
+import { createShareId } from '@/lib/share';
 
 export const maxDuration = 30;
 
@@ -41,12 +42,19 @@ export async function POST(request) {
   const profile = person ? getProfile(person.full) : null;
   if (!person || !profile) return reply({ error: 'invalid_name' }, 400);
 
-  if (!aiConfigured()) return reply({ text: profile.fallback, source: 'fallback', reason: 'no_key' });
+  const fallback = (reason) => reply({
+    text: profile.fallback,
+    source: 'fallback',
+    reason,
+    shareId: createShareId(person, profile.fallback, true),
+  });
+
+  if (!aiConfigured()) return fallback('no_key');
 
   try {
     const text = await generateText(buildPrompt(person, profile));
-    return reply({ text, source: 'ai' });
+    return reply({ text, source: 'ai', shareId: createShareId(person, text) });
   } catch {
-    return reply({ text: profile.fallback, source: 'fallback', reason: 'ai_error' });
+    return fallback('ai_error');
   }
 }

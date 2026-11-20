@@ -399,3 +399,9 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
     .sticker-float { animation: none; }
 }
+
+/* ---------- PNG export (static, fixed desktop layout) ---------- */
+.exporting *, .exporting *::before, .exporting *::after { animation: none !important; transition: none !important; }
+.export-desktop .sticker { height: 112px; max-width: 160px; }
+.export-desktop .sticker-a { right: 34px; }
+.export-desktop .sticker-b { left: 30px; }

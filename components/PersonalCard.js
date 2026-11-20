@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NAMES, normName } from '@/lib/names';
-import { renderPersonalCard, downloadCanvas } from '@/lib/exportCard';
+import { exportNodeToPng } from '@/lib/exportImage';
 import Stickers from './Stickers';
+import WishExport from './WishExport';
 
 const EMOJIS = ['🌟', '🍀', '🎈', '☀️', '📚', '✨', '💫'];
 
@@ -43,15 +44,18 @@ function useTypewriter(text, active) {
 }
 
 export default function PersonalCard({ person, showToast, onCelebrate }) {
-  const [wish, setWish] = useState({ status: 'loading', text: '', source: '', reason: '' });
+  const [wish, setWish] = useState({ status: 'loading', text: '', source: '', reason: '', shareId: '' });
+  const [qr, setQr] = useState('');
+  const [saving, setSaving] = useState(false);
   const controller = useRef(null);
+  const exportRef = useRef(null);
   const emoji = EMOJIS[NAMES.findIndex((n) => n.full === person.full) % EMOJIS.length];
 
   const loadWish = useCallback(async () => {
     controller.current?.abort();
     const current = new AbortController();
     controller.current = current;
-    setWish({ status: 'loading', text: '', source: '', reason: '' });
+    setWish({ status: 'loading', text: '', source: '', reason: '', shareId: '' });
 
     try {
       const response = await fetch('/api/wish', {
@@ -62,10 +66,10 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
       });
       const data = await response.json().catch(() => null);
       if (!response.ok || !data?.text) throw new Error(data?.error || 'request_failed');
-      setWish({ status: 'ready', text: data.text, source: data.source, reason: data.reason || '' });
+      setWish({ status: 'ready', text: data.text, source: data.source, reason: data.reason || '', shareId: data.shareId || '' });
     } catch (error) {
       if (error.name === 'AbortError') return;
-      setWish({ status: 'error', text: '', source: '', reason: '' });
+      setWish({ status: 'error', text: '', source: '', reason: '', shareId: '' });
     }
   }, [person.full]);
 
@@ -78,14 +82,57 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
   const typed = useTypewriter(wish.text, ready);
   const typing = ready && typed < wish.text.length;
 
-  function saveCard() {
+  // The QR points to a read-only page that shows exactly this wish.
+  useEffect(() => {
+    if (!ready || !wish.shareId) {
+      setQr('');
+      return;
+    }
+    let cancelled = false;
+    import('qrcode')
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(`${window.location.origin}/w/${wish.shareId}`, {
+          errorCorrectionLevel: 'L',
+          margin: 1,
+          width: 600,
+          color: { dark: '#4A4238', light: '#FFFFFF' },
+        }),
+      )
+      .then((url) => {
+        if (!cancelled) setQr(url);
+      })
+      .catch(() => {
+        if (!cancelled) setQr('');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, wish.shareId]);
+
+  async function saveCard() {
     if (!ready) {
       showToast('Đợi lời chúc viết xong đã nhé!', '⏳');
       return;
     }
-    const canvas = renderPersonalCard(person.full, wish.text);
-    downloadCanvas(canvas, `Thiep-19-11-11Nga-${normName(person.full).replace(/\s+/g, '-')}.png`);
-    showToast('Đã lưu ảnh thiệp của cậu về máy!', '📸');
+    if (saving) return;
+    if (wish.shareId && !qr) {
+      showToast('Đang tạo mã QR, chờ chút nhé!', '⏳');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const result = await exportNodeToPng(
+        exportRef.current,
+        `Thiep-19-11-11Nga-${normName(person.full).replace(/\s+/g, '-')}.png`,
+      );
+      if (result === 'downloaded') showToast('Đã lưu ảnh thiệp của cậu về máy!', '📸');
+      else if (result === 'shared') showToast('Chọn "Lưu ảnh" để giữ thiệp nhé!', '📸');
+    } catch {
+      showToast('Chưa tạo được ảnh, cậu thử lại nhé!', '⚠️');
+    } finally {
+      setSaving(false);
+    }
   }
 
   const loading = wish.status === 'loading';
@@ -176,13 +223,20 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
           <button
             type="button"
             onClick={saveCard}
-            className="btn-sticker px-5 py-2.5 rounded-2xl bg-butter hover:bg-butterBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-butterBorder shadow-[0_4px_0_#EBD584] flex items-center gap-2 ml-auto"
+            disabled={saving}
+            className="btn-sticker px-5 py-2.5 rounded-2xl bg-butter hover:bg-butterBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-butterBorder shadow-[0_4px_0_#EBD584] flex items-center gap-2 ml-auto disabled:opacity-60 disabled:cursor-wait"
           >
             <span>📸</span>
-            <span>Lưu ảnh thiệp của tớ</span>
+            <span>{saving ? 'Đang tạo ảnh...' : 'Lưu ảnh thiệp của tớ'}</span>
           </button>
         </div>
       </article>
+
+      {ready && (
+        <div aria-hidden="true" style={{ position: 'fixed', left: '-10000px', top: 0, pointerEvents: 'none' }}>
+          <WishExport ref={exportRef} person={person} text={wish.text} qr={qr} />
+        </div>
+      )}
     </div>
   );
 }
