@@ -67,7 +67,7 @@ export default function QrPanel({ showToast }) {
         <div className="mt-4 paper-card-peach rounded-3xl p-6 sm:p-7 animate-reveal">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
             <div className="sm:col-span-5 flex justify-center">
-              <div className="w-full max-w-[235px] bg-white rounded-3xl p-4 border-2 border-mintBorder shadow-[0_5px_0_#A9DFB1] text-center">
+              <div className="w-full max-w-[235px] bg-white rounded-3xl p-4 border-2 border-mintBorder shadow-[0_5px_0_rgb(var(--c-mintBorder))] text-center">
                 <span className="hover-pop cursor-default inline-block px-2.5 py-0.5 rounded-full bg-butter text-ink text-[10px] font-bold border border-butterBorder mb-2">
                   LỚP 11 NGA • 19/11
                 </span>
@@ -104,7 +104,7 @@ export default function QrPanel({ showToast }) {
                 <button
                   type="button"
                   onClick={downloadCard}
-                  className="btn-sticker flex-1 py-2.5 px-4 rounded-2xl bg-mintSoft hover:bg-mintBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-mintBorder shadow-[0_4px_0_#A9DFB1] flex items-center justify-center gap-2"
+                  className="btn-sticker flex-1 py-2.5 px-4 rounded-2xl bg-mintSoft hover:bg-mintBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-mintBorder shadow-[0_4px_0_rgb(var(--c-mintBorder))] flex items-center justify-center gap-2"
                 >
                   <span>📥</span>
                   <span>Tải thẻ QR chung (PNG)</span>
@@ -113,7 +113,7 @@ export default function QrPanel({ showToast }) {
                 <button
                   type="button"
                   onClick={copyUrl}
-                  className="btn-sticker py-2.5 px-4 rounded-2xl bg-white hover:bg-cream text-ink font-bold text-xs sm:text-sm border-2 border-peachBorder shadow-[0_4px_0_#F3BE9C] flex items-center justify-center gap-1.5"
+                  className="btn-sticker py-2.5 px-4 rounded-2xl bg-white hover:bg-cream text-ink font-bold text-xs sm:text-sm border-2 border-peachBorder shadow-[0_4px_0_rgb(var(--c-peachBorder))] flex items-center justify-center gap-1.5"
                 >
                   <span>🔗</span>
                   <span>Chép link</span>

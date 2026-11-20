@@ -14,6 +14,14 @@ Trên Android/Termux, Turbopack không chạy được, dùng `npx next build --
 
 Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). Không có key nào hoặc cả hai lỗi thì `/api/wish` trả lời chúc viết sẵn của từng bạn.
 
+## Tính năng
+
+- Lời chúc riêng cho từng bạn (AI), chọn giọng điệu (giữ nguyên / hài hước / cảm động / ngắn gọn), viết lại khi bấm nút
+- Lời chúc chung có nút viết lại (không tự chạy, tải lại trang là về bản gốc)
+- Lưu ảnh thiệp (PNG có mã QR) và Chia sẻ qua bảng chia sẻ của điện thoại (Zalo, Messenger, ...)
+- Trò chơi đoán tên tại `/guess`, góc ảnh các bạn ngay trên trang chủ
+- Giao diện sáng/tối: theo thiết bị, hoặc đổi bằng nút ở góc phải trên (ảnh xuất ra luôn là giao diện sáng)
+
 ## Cấu trúc
 
 - `app/page.js`, `app/layout.js`: trang và font
@@ -21,6 +29,9 @@ Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). K
 - `components/`: màn hình nhập tên, thiệp, lời chúc riêng, mã QR
 - `lib/generalWish.js`: lời chúc chung mặc định, đổi bằng biến `GENERAL_WISH` (tùy chọn, không đặt thì giữ nguyên)
 - `lib/share.js`: ID chia sẻ có chữ ký (chứa luôn lời chúc), dùng cho mã QR trên ảnh xuất ra và trang `/w/[id]` chỉ để xem
+- `app/guess/`, `components/GuessGame.js`, `lib/guessData.js`: trò chơi đoán tên
+- `components/PhotoWall.js`: góc ảnh
+- `components/ThemeToggle.js`: nút đổi giao diện; màu nằm ở biến `--c-*` trong `app/globals.css`
 - `lib/names.js`: luật tên hợp lệ (từ cuối của họ tên hoặc họ tên đầy đủ), dùng chung client và server
 - `lib/ai.js`: gọi proxy CYO, dự phòng Claude
 - `lib/profiles.js`: dữ liệu từng bạn và prompt (chỉ server)

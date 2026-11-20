@@ -2,12 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NAMES, normName } from '@/lib/names';
-import { exportNodeToPng } from '@/lib/exportImage';
+import { exportNodeToPng, renderPng, shareBlob } from '@/lib/exportImage';
 import { useTypewriter } from '@/lib/useTypewriter';
 import Stickers from './Stickers';
 import WishExport from './WishExport';
 
 const EMOJIS = ['🌟', '🍀', '🎈', '☀️', '📚', '✨', '💫'];
+
+// '' = giữ nguyên giọng như mặc định.
+const TONES = [
+  { id: '', label: 'Giữ nguyên' },
+  { id: 'funny', label: '😂 Hài hước' },
+  { id: 'touching', label: '🥹 Cảm động' },
+  { id: 'short', label: '⚡ Ngắn gọn' },
+];
 
 const FALLBACK_NOTES = {
   no_key: (call) => `Máy chủ chưa có khóa AI nên đây là lời chúc viết sẵn dành riêng cho ${call}.`,
@@ -15,32 +23,50 @@ const FALLBACK_NOTES = {
 };
 
 export default function PersonalCard({ person, showToast, onCelebrate }) {
-  const [wish, setWish] = useState({ status: 'loading', text: '', source: '', reason: '', shareId: '' });
+  const [wish, setWish] = useState({ status: 'loading', text: '', source: '', reason: '', shareId: '', tone: '' });
+  const [tone, setTone] = useState('');
   const [qr, setQr] = useState('');
   const [saving, setSaving] = useState(false);
+  const [shareImage, setShareImage] = useState(null);
   const controller = useRef(null);
   const exportRef = useRef(null);
+  // The chosen tone is only read when a wish is requested, so picking a chip never triggers a request by itself.
+  const toneRef = useRef('');
   const emoji = EMOJIS[NAMES.findIndex((n) => n.full === person.full) % EMOJIS.length];
+  const slug = normName(person.full).replace(/\s+/g, '-');
+
+  function chooseTone(id) {
+    toneRef.current = id;
+    setTone(id);
+  }
 
   const loadWish = useCallback(async () => {
     controller.current?.abort();
     const current = new AbortController();
     controller.current = current;
-    setWish({ status: 'loading', text: '', source: '', reason: '', shareId: '' });
+    const applied = toneRef.current;
+    setWish({ status: 'loading', text: '', source: '', reason: '', shareId: '', tone: applied });
 
     try {
       const response = await fetch('/api/wish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: person.full }),
+        body: JSON.stringify({ name: person.full, tone: applied }),
         signal: current.signal,
       });
       const data = await response.json().catch(() => null);
       if (!response.ok || !data?.text) throw new Error(data?.error || 'request_failed');
-      setWish({ status: 'ready', text: data.text, source: data.source, reason: data.reason || '', shareId: data.shareId || '' });
+      setWish({
+        status: 'ready',
+        text: data.text,
+        source: data.source,
+        reason: data.reason || '',
+        shareId: data.shareId || '',
+        tone: applied,
+      });
     } catch (error) {
       if (error.name === 'AbortError') return;
-      setWish({ status: 'error', text: '', source: '', reason: '', shareId: '' });
+      setWish({ status: 'error', text: '', source: '', reason: '', shareId: '', tone: applied });
     }
   }, [person.full]);
 
@@ -52,6 +78,7 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
   const ready = wish.status === 'ready';
   const typed = useTypewriter(wish.text, ready);
   const typing = ready && typed < wish.text.length;
+  const shareUrl = () => (wish.shareId ? `${window.location.origin}/w/${wish.shareId}` : window.location.origin);
 
   // The QR points to a read-only page that shows exactly this wish.
   useEffect(() => {
@@ -80,6 +107,25 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
     };
   }, [ready, wish.shareId]);
 
+  // Pre-render the image so "Chia sẻ" can open the share sheet immediately (browsers need it right after the tap).
+  useEffect(() => {
+    setShareImage(null);
+    if (!ready || (wish.shareId && !qr)) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const blob = await renderPng(exportRef.current, 2);
+        if (!cancelled) setShareImage(blob);
+      } catch {
+        /* sharing just stays unavailable; saving still works */
+      }
+    }, 900);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [ready, wish.text, wish.shareId, qr]);
+
   async function saveCard() {
     if (!ready) {
       showToast('Đợi lời chúc viết xong đã nhé!', '⏳');
@@ -93,10 +139,7 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
 
     setSaving(true);
     try {
-      const result = await exportNodeToPng(
-        exportRef.current,
-        `Thiep-19-11-11Nga-${normName(person.full).replace(/\s+/g, '-')}.png`,
-      );
+      const result = await exportNodeToPng(exportRef.current, `Thiep-19-11-11Nga-${slug}.png`);
       if (result === 'downloaded') showToast('Đã lưu ảnh thiệp của cậu về máy!', '📸');
       else if (result === 'shared') showToast('Chọn "Lưu ảnh" để giữ thiệp nhé!', '📸');
     } catch {
@@ -106,8 +149,27 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
     }
   }
 
+  async function shareCard() {
+    if (!ready) {
+      showToast('Đợi lời chúc viết xong đã nhé!', '⏳');
+      return;
+    }
+    if (!shareImage) {
+      showToast('Đang chuẩn bị ảnh, cậu bấm lại sau vài giây nhé!', '⏳');
+      return;
+    }
+    const result = await shareBlob(shareImage, `Thiep-19-11-11Nga-${slug}.png`, {
+      title: `Lời chúc 19/11 cho ${person.call}`,
+      text: `Lời chúc 19/11 dành cho ${person.full} ✨`,
+      url: shareUrl(),
+    });
+    if (result === 'copied') showToast('Đã chép link, cậu dán vào Zalo hoặc Messenger nhé!', '🔗');
+    else if (result === 'unsupported') showToast('Máy này chưa hỗ trợ chia sẻ, cậu hãy lưu ảnh nhé!', '⚠️');
+  }
+
   const loading = wish.status === 'loading';
   const note = wish.source === 'fallback' ? (FALLBACK_NOTES[wish.reason] || FALLBACK_NOTES.ai_error)(person.call) : '';
+  const toneChanged = !loading && tone !== wish.tone;
 
   return (
     <div className="relative pt-[68px] pb-16 sm:pt-[88px] sm:pb-[88px]">
@@ -171,11 +233,35 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
           {note && <p className="mt-2 text-xs text-inkLight font-semibold">{note}</p>}
         </div>
 
+        <div className="mb-5" role="group" aria-label="Giọng điệu lời chúc">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-inkLight mr-1">Giọng điệu</span>
+            {TONES.map((option) => (
+              <button
+                key={option.id || 'default'}
+                type="button"
+                aria-pressed={tone === option.id}
+                onClick={() => chooseTone(option.id)}
+                className={`hover-pop px-3 py-1 rounded-full text-xs font-bold text-ink border-2 ${
+                  tone === option.id
+                    ? 'bg-butter border-butterBorder shadow-[0_2px_0_rgb(var(--c-butterBorder))]'
+                    : 'bg-white border-mintBorder/70'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          {toneChanged && (
+            <p className="mt-2 text-xs font-semibold text-inkLight">Cậu bấm &quot;Viết lại lời chúc&quot; để áp dụng giọng này nhé.</p>
+          )}
+        </div>
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={onCelebrate}
-            className="btn-sticker px-4 py-2.5 rounded-2xl bg-pinkSoft hover:bg-pinkBorder/60 text-ink font-bold text-xs sm:text-sm border-2 border-pinkBorder shadow-[0_4px_0_#F6BDCB] flex items-center gap-1.5"
+            className="btn-sticker px-4 py-2.5 rounded-2xl bg-pinkSoft hover:bg-pinkBorder/60 text-ink font-bold text-xs sm:text-sm border-2 border-pinkBorder shadow-[0_4px_0_rgb(var(--c-pinkBorder))] flex items-center gap-1.5"
           >
             <span>🎉</span>
             <span>Bắn pháo chúc mừng</span>
@@ -185,21 +271,33 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
             type="button"
             onClick={loadWish}
             disabled={loading}
-            className="btn-sticker px-4 py-2.5 rounded-2xl bg-mintSoft hover:bg-mintBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-mintBorder shadow-[0_4px_0_#A9DFB1] flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-wait"
+            className="btn-sticker px-4 py-2.5 rounded-2xl bg-mintSoft hover:bg-mintBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-mintBorder shadow-[0_4px_0_rgb(var(--c-mintBorder))] flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-wait"
           >
             <span>🔄</span>
             <span>Viết lại lời chúc</span>
           </button>
 
-          <button
-            type="button"
-            onClick={saveCard}
-            disabled={saving}
-            className="btn-sticker px-5 py-2.5 rounded-2xl bg-butter hover:bg-butterBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-butterBorder shadow-[0_4px_0_#EBD584] flex items-center gap-2 ml-auto disabled:opacity-60 disabled:cursor-wait"
-          >
-            <span>📸</span>
-            <span>{saving ? 'Đang tạo ảnh...' : 'Lưu ảnh thiệp của tớ'}</span>
-          </button>
+          <div className="ml-auto flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={shareCard}
+              disabled={!ready}
+              className="btn-sticker px-4 py-2.5 rounded-2xl bg-white hover:bg-cream text-ink font-bold text-xs sm:text-sm border-2 border-mintBorder shadow-[0_4px_0_rgb(var(--c-mintBorder))] flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span>📤</span>
+              <span>Chia sẻ</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={saveCard}
+              disabled={saving}
+              className="btn-sticker px-5 py-2.5 rounded-2xl bg-butter hover:bg-butterBorder/70 text-ink font-bold text-xs sm:text-sm border-2 border-butterBorder shadow-[0_4px_0_rgb(var(--c-butterBorder))] flex items-center gap-2 disabled:opacity-60 disabled:cursor-wait"
+            >
+              <span>📸</span>
+              <span>{saving ? 'Đang tạo ảnh...' : 'Lưu ảnh thiệp của tớ'}</span>
+            </button>
+          </div>
         </div>
       </article>
 

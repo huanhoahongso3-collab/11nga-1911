@@ -1,5 +1,5 @@
 import { findPerson } from '@/lib/names';
-import { getProfile, buildPrompt } from '@/lib/profiles';
+import { getProfile, buildPrompt, TONE_PROMPTS } from '@/lib/profiles';
 import { aiConfigured, generateText } from '@/lib/ai';
 import { createShareId } from '@/lib/share';
 import { createLimiter } from '@/lib/rateLimit';
@@ -27,6 +27,8 @@ export async function POST(request) {
   const profile = person ? getProfile(person.full) : null;
   if (!person || !profile) return reply({ error: 'invalid_name' }, 400);
 
+  const tone = typeof body?.tone === 'string' && Object.hasOwn(TONE_PROMPTS, body.tone) ? body.tone : '';
+
   const fallback = (reason) => reply({
     text: profile.fallback,
     source: 'fallback',
@@ -37,7 +39,7 @@ export async function POST(request) {
   if (!aiConfigured()) return fallback('no_key');
 
   try {
-    const text = await generateText(buildPrompt(person, profile));
+    const text = await generateText(buildPrompt(person, profile, tone));
     return reply({ text, source: 'ai', shareId: createShareId(person, text) });
   } catch {
     return fallback('ai_error');

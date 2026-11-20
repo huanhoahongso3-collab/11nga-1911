@@ -68,8 +68,8 @@ export default function CardStep({ person, generalWish, musicOn, onBack, onToggl
             onClick={onToggleMusic}
             className={`btn-sticker px-3.5 py-2 rounded-xl text-ink text-xs font-bold border flex items-center gap-1.5 ${
               musicOn
-                ? 'bg-mintSoft hover:bg-mintBorder/70 border-mintBorder shadow-[0_3px_0_#A9DFB1]'
-                : 'bg-white border-ink/20 shadow-[0_3px_0_#A9DFB1]'
+                ? 'bg-mintSoft hover:bg-mintBorder/70 border-mintBorder shadow-[0_3px_0_rgb(var(--c-mintBorder))]'
+                : 'bg-white border-ink/20 shadow-[0_3px_0_rgb(var(--c-mintBorder))]'
             }`}
           >
             {musicOn ? (
@@ -88,7 +88,7 @@ export default function CardStep({ person, generalWish, musicOn, onBack, onToggl
           <button
             type="button"
             onClick={launchExtraCelebration}
-            className="btn-sticker px-3.5 py-2 rounded-xl bg-pinkSoft hover:bg-pinkBorder/70 text-ink text-xs font-bold border border-pinkBorder shadow-[0_3px_0_#F6BDCB] flex items-center gap-1.5"
+            className="btn-sticker px-3.5 py-2 rounded-xl bg-pinkSoft hover:bg-pinkBorder/70 text-ink text-xs font-bold border border-pinkBorder shadow-[0_3px_0_rgb(var(--c-pinkBorder))] flex items-center gap-1.5"
           >
             <span>🎆</span>
             <span>Thả thêm pháo</span>
@@ -151,7 +151,7 @@ export default function CardStep({ person, generalWish, musicOn, onBack, onToggl
             type="button"
             onClick={regenerateGeneral}
             disabled={busy}
-            className="btn-sticker px-4 py-2.5 rounded-2xl bg-peachSoft hover:bg-peachBorder/60 text-ink font-bold text-xs sm:text-sm border-2 border-peachBorder shadow-[0_4px_0_#F3BE9C] flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-wait"
+            className="btn-sticker px-4 py-2.5 rounded-2xl bg-peachSoft hover:bg-peachBorder/60 text-ink font-bold text-xs sm:text-sm border-2 border-peachBorder shadow-[0_4px_0_rgb(var(--c-peachBorder))] flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-wait"
           >
             <span>🔄</span>
             <span>Viết lại lời chúc chung</span>
@@ -161,7 +161,7 @@ export default function CardStep({ person, generalWish, musicOn, onBack, onToggl
             <button
               type="button"
               onClick={resetGeneral}
-              className="btn-sticker px-4 py-2.5 rounded-2xl bg-white hover:bg-cream text-ink font-bold text-xs sm:text-sm border-2 border-peachBorder shadow-[0_4px_0_#F3BE9C] flex items-center gap-1.5"
+              className="btn-sticker px-4 py-2.5 rounded-2xl bg-white hover:bg-cream text-ink font-bold text-xs sm:text-sm border-2 border-peachBorder shadow-[0_4px_0_rgb(var(--c-peachBorder))] flex items-center gap-1.5"
             >
               <span>↩️</span>
               <span>Về lời chúc gốc</span>

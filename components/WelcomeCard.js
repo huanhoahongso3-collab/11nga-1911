@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { findPerson } from '@/lib/names';
 
 export default function WelcomeCard({ onOpen, focusOnMount }) {
@@ -109,11 +110,20 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
 
           <button
             type="submit"
-            className="btn-sticker cta-pulse w-full py-3.5 px-6 rounded-2xl bg-peachSoft hover:bg-peachBorder/75 text-ink font-bold text-base sm:text-lg border-2 border-peachBorder shadow-[0_5px_0_#F3BE9C] flex items-center justify-center gap-2"
+            className="btn-sticker cta-pulse w-full py-3.5 px-6 rounded-2xl bg-peachSoft hover:bg-peachBorder/75 text-ink font-bold text-base sm:text-lg border-2 border-peachBorder shadow-[0_5px_0_rgb(var(--c-peachBorder))] flex items-center justify-center gap-2"
           >
             <span>Mở thiệp 19/11 ✨</span>
           </button>
         </form>
+
+        <Link
+          href="/guess"
+          className="animate-rise hover-pop mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border-2 border-mintBorder text-ink text-xs sm:text-sm font-bold"
+          style={{ '--d': '420ms' }}
+        >
+          <span>🎮</span>
+          <span>Chơi đoán tên các bạn nam</span>
+        </Link>
 
         <p className="animate-rise mt-6 text-xs text-inkLight font-semibold" style={{ '--d': '460ms' }}>
           From tập thể nữ 11 Nga với thật nhiều yêu thương ♥

@@ -6,6 +6,7 @@ import CardStep from './CardStep';
 import QrPanel from './QrPanel';
 import Toast from './Toast';
 import Ambient from './Ambient';
+import PhotoWall from './PhotoWall';
 import Reveal from './Reveal';
 import Balloons from './Balloons';
 import { PastelAudio } from '@/lib/audio';
@@ -114,6 +115,7 @@ export default function Greeting({ generalWish }) {
         ) : (
           <WelcomeCard onOpen={openCard} focusOnMount={hasOpened} />
         )}
+        <PhotoWall />
         <QrPanel showToast={showToast} />
       </main>
 

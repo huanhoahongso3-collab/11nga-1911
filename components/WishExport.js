@@ -13,7 +13,7 @@ const STAGE_STYLE = {
 // Off-screen copy of the wish card that html-to-image turns into the PNG: fixed width, no animations, with a QR code.
 export default function WishExport({ ref, person, text, qr }) {
   return (
-    <div ref={ref} className="exporting font-sans text-ink" style={STAGE_STYLE}>
+    <div ref={ref} data-theme="light" className="exporting font-sans text-ink" style={STAGE_STYLE}>
       <WishFace person={person} text={text} fixed animated={false}>
         {qr && (
           <div className="mt-5 flex items-center gap-4 border-t border-dashed border-mintBorder pt-5">
