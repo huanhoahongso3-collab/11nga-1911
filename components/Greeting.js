@@ -113,10 +113,12 @@ export default function Greeting({ generalWish }) {
             showToast={showToast}
           />
         ) : (
-          <WelcomeCard onOpen={openCard} focusOnMount={hasOpened} />
+          <>
+            <WelcomeCard onOpen={openCard} focusOnMount={hasOpened} />
+            <PhotoWall />
+            <QrPanel showToast={showToast} />
+          </>
         )}
-        <PhotoWall />
-        <QrPanel showToast={showToast} />
       </main>
 
       <footer className="text-center py-5 text-xs font-semibold text-inkLight">
