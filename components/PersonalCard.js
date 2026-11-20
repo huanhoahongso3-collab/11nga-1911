@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NAMES, normName } from '@/lib/names';
 import { exportNodeToPng } from '@/lib/exportImage';
+import { useTypewriter } from '@/lib/useTypewriter';
 import Stickers from './Stickers';
 import WishExport from './WishExport';
 
@@ -12,36 +13,6 @@ const FALLBACK_NOTES = {
   no_key: (call) => `Máy chủ chưa có khóa AI nên đây là lời chúc viết sẵn dành riêng cho ${call}.`,
   ai_error: (call) => `AI đang bận hoặc bị lỗi nên đây là lời chúc viết sẵn dành riêng cho ${call}.`,
 };
-
-// Reveals text progressively; stays fully visible for people who prefer reduced motion.
-function useTypewriter(text, active) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!active) {
-      setCount(0);
-      return;
-    }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setCount(text.length);
-      return;
-    }
-
-    setCount(0);
-    const total = Math.min(3400, Math.max(1300, text.length * 22));
-    const start = performance.now();
-    let frame;
-    const step = (now) => {
-      const progress = Math.min(1, (now - start) / total);
-      setCount(Math.ceil(progress * text.length));
-      if (progress < 1) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [text, active]);
-
-  return count;
-}
 
 export default function PersonalCard({ person, showToast, onCelebrate }) {
   const [wish, setWish] = useState({ status: 'loading', text: '', source: '', reason: '', shareId: '' });

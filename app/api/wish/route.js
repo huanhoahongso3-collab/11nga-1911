@@ -2,26 +2,11 @@ import { findPerson } from '@/lib/names';
 import { getProfile, buildPrompt } from '@/lib/profiles';
 import { aiConfigured, generateText } from '@/lib/ai';
 import { createShareId } from '@/lib/share';
+import { createLimiter } from '@/lib/rateLimit';
 
 export const maxDuration = 30;
 
-const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 10;
-const hits = new Map();
-
-// Best-effort limiter: serverless instances don't share memory, so this only slows down a single warm instance.
-function limited(ip) {
-  const now = Date.now();
-  if (hits.size > 1000) {
-    for (const [key, list] of hits) {
-      if (!list.some((t) => now - t < WINDOW_MS)) hits.delete(key);
-    }
-  }
-  const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > MAX_PER_WINDOW;
-}
+const limited = createLimiter(10, 60_000);
 
 function reply(body, status = 200) {
   return Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });

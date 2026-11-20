@@ -22,10 +22,7 @@ export default function WishExport({ ref, person, text, qr }) {
             </div>
             <div className="min-w-0">
               <p className="font-hand text-xl text-ink leading-snug">Quét mã để xem lại lời chúc này</p>
-              <p className="mt-1 text-xs font-semibold text-inkLight">
-                Mở đúng lời chúc dành riêng cho {person.call}, giữ nguyên như hôm nay.
-              </p>
-              <p className="mt-2 text-xs font-bold text-inkLight">Happy International Men&apos;s Day • 19/11</p>
+              <p className="mt-1 text-xs font-bold text-inkLight">Happy International Men&apos;s Day • 19/11</p>
             </div>
           </div>
         )}
