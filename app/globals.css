@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: #FFFDF9;
+    color: #4A4238;
+    /* Họa tiết chấm bi & kẻ ô sổ tay giấy nhẹ nhàng */
+    background-image:
+        radial-gradient(rgba(243, 190, 156, 0.35) 1.25px, transparent 1.25px),
+        linear-gradient(to right, rgba(169, 223, 177, 0.16) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(169, 223, 177, 0.16) 1px, transparent 1px);
+    background-size: 28px 28px, 28px 28px, 28px 28px;
+    background-position: 14px 14px, 0 0, 0 0;
+    overflow-x: hidden;
+}
+
+/* Thẻ giấy handmade viền bo tròn tự nhiên */
+.paper-card {
+    background-color: #FFFFFF;
+    border: 2px solid #EFE6D8;
+    box-shadow: 0 7px 0 #EFE6D8, 0 14px 26px rgba(74, 66, 56, 0.06);
+}
+
+.paper-card-mint {
+    background-color: #F7FCF8;
+    border: 2px solid #A9DFB1;
+    box-shadow: 0 7px 0 #A9DFB1, 0 14px 24px rgba(74, 66, 56, 0.05);
+}
+
+.paper-card-peach {
+    background-color: #FFF9F5;
+    border: 2px solid #F3BE9C;
+    box-shadow: 0 7px 0 #F3BE9C, 0 14px 24px rgba(74, 66, 56, 0.05);
+}
+
+.paper-card-butter {
+    background-color: #FFFDF3;
+    border: 2px solid #EBD584;
+    box-shadow: 0 7px 0 #EBD584, 0 14px 24px rgba(74, 66, 56, 0.05);
+}
+
+/* Miếng băng dính giấy trang trí góc trên */
+.washi-tape {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 108px;
+    height: 24px;
+    background-color: rgba(255, 229, 236, 0.88);
+    border-left: 2px dashed rgba(255, 255, 255, 0.85);
+    border-right: 2px dashed rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 4px rgba(74, 66, 56, 0.05);
+    z-index: 10;
+}
+
+.washi-tape-mint {
+    background-color: rgba(216, 243, 220, 0.92);
+    transform: translateX(-50%) rotate(1.8deg);
+}
+
+.washi-tape-peach {
+    background-color: rgba(255, 216, 190, 0.9);
+    transform: translateX(-50%) rotate(-1.4deg);
+}
+
+/* Nút bấm kiểu sticker nhấn êm */
+.btn-sticker {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+.btn-sticker:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 currentColor !important;
+}
+
+/* Hiệu ứng chuyển cảnh mượt giữa 2 bước */
+@keyframes cardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+.animate-reveal {
+    animation: cardReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(3deg); }
+}
+.doodle-float {
+    animation: floatSlow 4.8s ease-in-out infinite;
+}
+
+#sharedQrcode img, #sharedQrcode canvas {
+    margin: 0 auto;
+    border-radius: 10px;
+}
