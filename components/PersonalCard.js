@@ -135,10 +135,10 @@ export default function PersonalCard({ person, showToast, onCelebrate }) {
           {ready && (
             <p className="text-sm sm:text-base text-ink leading-relaxed font-medium" aria-label={wish.text}>
               <span aria-hidden="true" className={typing ? 'caret' : ''}>
-                &quot;{wish.text.slice(0, typed)}
+                &quot;{wish.text.slice(0, typed)}{!typing && '"'}
               </span>
               <span aria-hidden="true" className="opacity-0">
-                {wish.text.slice(typed)}&quot;
+                {wish.text.slice(typed)}{typing && '"'}
               </span>
             </p>
           )}
