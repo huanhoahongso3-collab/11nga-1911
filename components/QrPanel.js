@@ -68,7 +68,7 @@ export default function QrPanel({ showToast }) {
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
             <div className="sm:col-span-5 flex justify-center">
               <div className="w-full max-w-[235px] bg-white rounded-3xl p-4 border-2 border-mintBorder shadow-[0_5px_0_#A9DFB1] text-center">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-butter text-ink text-[10px] font-bold border border-butterBorder mb-2">
+                <span className="hover-pop cursor-default inline-block px-2.5 py-0.5 rounded-full bg-butter text-ink text-[10px] font-bold border border-butterBorder mb-2">
                   LỚP 11 NGA • 19/11
                 </span>
                 <div className="p-2 bg-cream rounded-2xl border border-dashed border-ink/20 inline-block">

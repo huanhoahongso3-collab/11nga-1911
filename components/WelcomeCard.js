@@ -52,7 +52,7 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
         </svg>
 
         <div
-          className="animate-rise inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-butter border-2 border-butterBorder text-ink text-xs sm:text-sm font-bold mb-5"
+          className="animate-rise hover-pop cursor-default inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-butter border-2 border-butterBorder text-ink text-xs sm:text-sm font-bold mb-5"
           style={{ '--d': '60ms' }}
         >
           <span className="animate-bob">🍀</span>
@@ -61,12 +61,12 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
 
         <h1 className="font-hand text-3xl sm:text-5xl text-ink leading-tight mb-3">
           {['Gửi', 'các', 'chàng', 'trai'].map((word, i) => (
-            <span key={word} className="animate-rise inline-block mr-[0.28em]" style={{ '--d': `${160 + i * 90}ms` }}>
+            <span key={word} className="animate-rise hover-word inline-block mr-[0.28em]" style={{ '--d': `${160 + i * 90}ms` }}>
               {word}
             </span>
           ))}
           <span
-            className="animate-pop inline-block bg-mintSoft px-3 py-0.5 rounded-2xl border-2 border-mintBorder transform -rotate-1"
+            className="animate-pop hover-chip inline-block bg-mintSoft px-3 py-0.5 rounded-2xl border-2 border-mintBorder transform -rotate-1"
             style={{ '--d': '560ms' }}
           >
             11 Nga

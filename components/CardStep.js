@@ -13,7 +13,7 @@ export default function CardStep({ person, musicOn, onBack, onToggleMusic, showT
         <button
           type="button"
           onClick={onBack}
-          className="px-3.5 py-2 rounded-xl bg-white hover:bg-cream text-ink text-xs font-bold border border-butterBorder shadow-2xs transition shrink-0"
+          className="hover-pop px-3.5 py-2 rounded-xl bg-white hover:bg-cream text-ink text-xs font-bold border border-butterBorder shrink-0"
         >
           ← Đổi tên khác
         </button>
@@ -56,7 +56,7 @@ export default function CardStep({ person, musicOn, onBack, onToggleMusic, showT
         <div className="washi-tape washi-tape-peach" />
 
         <div className="flex items-center gap-3 mb-4 pt-1">
-          <span className="w-10 h-10 rounded-2xl bg-peachSoft/60 border border-peachBorder flex items-center justify-center text-xl shrink-0">
+          <span className="hover-spin w-10 h-10 rounded-2xl bg-peachSoft/60 border border-peachBorder flex items-center justify-center text-xl shrink-0">
             🌿
           </span>
           <div>

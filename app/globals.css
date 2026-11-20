@@ -328,3 +328,74 @@ body::before {
     50% { transform: translate3d(var(--sway), -60vh, 0) rotate(5deg); }
     100% { transform: translate3d(calc(var(--sway) * -1), -125vh, 0) rotate(-4deg); opacity: 1; }
 }
+
+/* ---------- Hover effects (pointer devices only) ---------- */
+.hover-pop, .hover-chip, .hover-spin {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.hover-chip, .hover-word { cursor: default; }
+@keyframes word-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(-9px) rotate(-3deg); }
+    60% { transform: translateY(2px) rotate(1deg); }
+}
+@keyframes beat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.55); }
+    50% { transform: scale(1.1); }
+    75% { transform: scale(1.4); }
+}
+@media (hover: hover) {
+    .hover-pop:hover { transform: translateY(-3px) rotate(2deg) scale(1.08); }
+    .hover-chip:hover {
+        transform: rotate(2.5deg) scale(1.12);
+        background-color: #FFF3C4;
+        border-color: #EBD584;
+        box-shadow: 0 5px 0 #EBD584;
+    }
+    .hover-word:hover { animation: word-bounce 0.5s ease; }
+    .hover-spin:hover { transform: rotate(360deg) scale(1.15); }
+    .hover-beat:hover { animation: beat 0.7s ease; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hover-pop:hover, .hover-chip:hover, .hover-spin:hover { transform: none; }
+    .hover-word:hover, .hover-beat:hover { animation: none; }
+}
+
+/* ---------- Photo stickers around the personal wish card ---------- */
+.sticker-slot {
+    position: absolute;
+    z-index: 20;
+    display: block;
+    transform: rotate(var(--rot, 0deg));
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sticker-a { top: 0; right: 14px; }
+.sticker-b { bottom: 0; left: 10px; }
+.sticker {
+    display: block;
+    height: 88px;
+    width: auto;
+    max-width: 128px;
+    object-fit: contain;
+    user-select: none;
+    filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+        drop-shadow(0 6px 7px rgba(74, 66, 56, 0.28));
+}
+@keyframes sticker-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(2deg); }
+}
+.sticker-float { animation: sticker-float 4.2s ease-in-out infinite; }
+.sticker-float-b { animation-duration: 5s; animation-delay: -1.5s; }
+@media (min-width: 640px) {
+    .sticker-a { right: 34px; }
+    .sticker-b { left: 30px; }
+    .sticker { height: 112px; max-width: 160px; }
+}
+@media (hover: hover) {
+    .sticker-slot:hover { transform: rotate(0deg) scale(1.18) translateY(-4px); z-index: 25; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sticker-float { animation: none; }
+}

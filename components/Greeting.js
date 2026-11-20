@@ -118,7 +118,7 @@ export default function Greeting() {
 
       <footer className="text-center py-5 text-xs font-semibold text-inkLight">
         <span>Made with </span>
-        <span className="text-rose-400">♥</span>
+        <span className="hover-beat inline-block cursor-default text-rose-400">♥</span>
         <span> by Tập thể nữ 11 Nga</span>
       </footer>
     </>
