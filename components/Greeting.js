@@ -7,6 +7,8 @@ import QrPanel from './QrPanel';
 import Toast from './Toast';
 import Ambient from './Ambient';
 import PhotoWall from './PhotoWall';
+import YearCompare from './YearCompare';
+import Credits from './Credits';
 import Reveal from './Reveal';
 import Balloons from './Balloons';
 import { PastelAudio } from '@/lib/audio';
@@ -115,13 +117,15 @@ export default function Greeting({ generalWish }) {
         ) : (
           <>
             <WelcomeCard onOpen={openCard} focusOnMount={hasOpened} />
+            <YearCompare />
             <PhotoWall />
             <QrPanel showToast={showToast} />
           </>
         )}
       </main>
 
-      <footer className="text-center py-5 text-xs font-semibold text-inkLight">
+      <footer className="text-center pt-4 pb-6 text-xs font-semibold text-inkLight">
+        <Credits />
         <span>Made with </span>
         <span className="hover-beat inline-block cursor-default text-rose-400">♥</span>
         <span> by Tập thể nữ 11 Nga</span>
