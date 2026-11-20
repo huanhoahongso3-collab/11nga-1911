@@ -8,7 +8,8 @@ import { PastelFireworks, clearCelebrationTimers, launchExtraCelebration } from 
 
 const ROUNDS = 8;
 const MAX_HINT_LEVEL = 2;
-const BLUR = [20, 11, 5];
+// Light blur: each hint sharpens the photo, and the answer shows it clear.
+const BLUR = [6, 3, 1];
 
 function shuffle(list) {
   const copy = [...list];
@@ -24,7 +25,6 @@ function newGame() {
     .slice(0, ROUNDS)
     .map((person) => ({
       person,
-      photo: Math.random() < 0.5 ? 1 : 2,
       options: shuffle([person, ...shuffle(NAMES.filter((n) => n.full !== person.full)).slice(0, 3)]),
     }));
 }
@@ -130,12 +130,16 @@ export default function GuessGame() {
 
             <div className="mx-auto mb-5 flex h-60 w-60 max-w-full items-center justify-center rounded-full border-2 border-peachBorder bg-peachSoft/50 overflow-hidden">
               <img
-                key={`${index}-${answered}`}
-                src={`/stickers/${normName(round.person.full).replace(/\s+/g, '-')}-${round.photo}.png`}
-                alt={answered ? round.person.full : 'Ảnh mờ của một bạn nam'}
+                key={index}
+                src={`/guess/${normName(round.person.full).replace(/\s+/g, '-')}.jpg`}
+                alt={answered ? round.person.full : 'Ảnh hơi mờ của một bạn nam'}
                 draggable="false"
-                className={`game-photo ${answered ? 'diecut animate-pop' : ''}`}
-                style={answered ? undefined : { filter: `blur(${BLUR[level]}px) brightness(0.97)` }}
+                className="game-photo"
+                style={
+                  answered
+                    ? { filter: 'none', transform: 'scale(1)' }
+                    : { filter: `blur(${BLUR[level]}px)`, transform: 'scale(1.12)' }
+                }
               />
             </div>
 
