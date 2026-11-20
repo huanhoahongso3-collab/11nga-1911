@@ -22,6 +22,13 @@ Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). K
 - Trò chơi đoán tên tại `/guess`, góc ảnh các bạn ngay trên trang chủ
 - Giao diện sáng/tối: theo thiết bị, hoặc đổi bằng nút ở góc phải trên (ảnh xuất ra luôn là giao diện sáng)
 
+## Bảo mật
+
+- `proxy.js` + `lib/guard.js` chạy trước mọi trang và API: chặn dò tìm file nguồn/cấu hình (`.env`, `.git`, `package.json`, `lib/`, `*.map`, ...), mã hóa đường dẫn kiểu `..`/`%2e`, công cụ quét lỗ hổng, và các method không dùng (API chỉ nhận POST)
+- API chỉ nhận yêu cầu từ chính trang web này (chặn gọi từ site khác để không bị tốn lượt AI), giới hạn kích thước body và tần suất, lấy IP từ header của nền tảng thay vì header có thể giả
+- `next.config.mjs` thêm header bảo mật (X-Frame-Options, CSP chống nhúng khung, nosniff, HSTS, Permissions-Policy), ẩn X-Powered-By, không xuất source map
+- Khóa AI và `SHARE_SECRET` chỉ nằm ở biến môi trường phía server
+
 ## Cấu trúc
 
 - `app/page.js`, `app/layout.js`: trang và font
@@ -32,6 +39,7 @@ Thứ tự thử: proxy CYO (`CYO_AI_API`) rồi Claude (`ANTHROPIC_API_KEY`). K
 - `app/guess/`, `components/GuessGame.js`, `lib/guessData.js`: trò chơi đoán tên
 - `components/PhotoWall.js`: góc ảnh
 - `components/ThemeToggle.js`: nút đổi giao diện; màu nằm ở biến `--c-*` trong `app/globals.css`
+- `proxy.js`, `lib/guard.js`: lớp lọc yêu cầu (xem mục Bảo mật)
 - `lib/names.js`: luật tên hợp lệ (từ cuối của họ tên hoặc họ tên đầy đủ), dùng chung client và server
 - `lib/ai.js`: gọi proxy CYO, dự phòng Claude
 - `lib/profiles.js`: dữ liệu từng bạn và prompt (chỉ server)

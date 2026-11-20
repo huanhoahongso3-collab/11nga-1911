@@ -3,6 +3,7 @@ import { getProfile, buildPrompt, TONE_PROMPTS } from '@/lib/profiles';
 import { aiConfigured, generateText } from '@/lib/ai';
 import { createShareId } from '@/lib/share';
 import { createLimiter } from '@/lib/rateLimit';
+import { clientIp, isSameOrigin, readJsonBody } from '@/lib/guard';
 
 export const maxDuration = 30;
 
@@ -13,15 +14,12 @@ function reply(body, status = 200) {
 }
 
 export async function POST(request) {
-  const ip = (request.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim();
-  if (limited(ip)) return reply({ error: 'rate_limited' }, 429);
+  if (!isSameOrigin(request)) return reply({ error: 'forbidden' }, 403);
+  if (limited(clientIp(request))) return reply({ error: 'rate_limited' }, 429);
 
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return reply({ error: 'bad_request' }, 400);
-  }
+  const parsed = await readJsonBody(request);
+  if (parsed.error) return reply({ error: parsed.error === 'too_large' ? 'too_large' : 'bad_request' }, parsed.error === 'too_large' ? 413 : 400);
+  const body = parsed.value;
 
   const person = typeof body?.name === 'string' && body.name.length <= 60 ? findPerson(body.name) : null;
   const profile = person ? getProfile(person.full) : null;
