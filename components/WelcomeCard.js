@@ -59,9 +59,16 @@ export default function WelcomeCard({ onOpen, focusOnMount }) {
           <span>19/11 • Lớp 11 Nga</span>
         </div>
 
-        <h1 className="animate-rise font-hand text-3xl sm:text-5xl text-ink leading-tight mb-3" style={{ '--d': '160ms' }}>
-          Gửi các chàng trai{' '}
-          <span className="inline-block bg-mintSoft px-3 py-0.5 rounded-2xl border-2 border-mintBorder transform -rotate-1">
+        <h1 className="font-hand text-3xl sm:text-5xl text-ink leading-tight mb-3">
+          {['Gửi', 'các', 'chàng', 'trai'].map((word, i) => (
+            <span key={word} className="animate-rise inline-block mr-[0.28em]" style={{ '--d': `${160 + i * 90}ms` }}>
+              {word}
+            </span>
+          ))}
+          <span
+            className="animate-pop inline-block bg-mintSoft px-3 py-0.5 rounded-2xl border-2 border-mintBorder transform -rotate-1"
+            style={{ '--d': '560ms' }}
+          >
             11 Nga
           </span>
         </h1>

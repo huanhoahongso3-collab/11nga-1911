@@ -6,6 +6,8 @@ import CardStep from './CardStep';
 import QrPanel from './QrPanel';
 import Toast from './Toast';
 import Ambient from './Ambient';
+import Reveal from './Reveal';
+import Balloons from './Balloons';
 import { PastelAudio } from '@/lib/audio';
 import { PastelFireworks, triggerOpeningCelebration, clearCelebrationTimers } from '@/lib/fireworks';
 
@@ -16,6 +18,8 @@ export default function Greeting() {
   const [toast, setToast] = useState({ text: '', icon: '✨', show: false });
   const canvasRef = useRef(null);
   const toastTimer = useRef(null);
+  const revealTimer = useRef(null);
+  const [revealing, setRevealing] = useState(false);
 
   const showToast = useCallback((text, icon = '✨') => {
     clearTimeout(toastTimer.current);
@@ -26,7 +30,23 @@ export default function Greeting() {
   useEffect(() => {
     PastelFireworks.init(canvasRef.current);
     PastelAudio.onChange = () => setMusicOn(!PastelAudio.isMuted);
+
+    const onPointerDown = (event) => PastelFireworks.sparkleAt(event.clientX, event.clientY);
+    let lastTrail = 0;
+    const onPointerMove = (event) => {
+      if (event.pointerType !== 'mouse') return;
+      const now = performance.now();
+      if (now - lastTrail < 40) return;
+      lastTrail = now;
+      PastelFireworks.trailAt(event.clientX, event.clientY);
+    };
+    window.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+
     return () => {
+      window.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      clearTimeout(revealTimer.current);
       PastelAudio.onChange = null;
       PastelAudio.stopMusic();
       clearCelebrationTimers();
@@ -51,6 +71,9 @@ export default function Greeting() {
   function openCard(selected) {
     setPerson(selected);
     setHasOpened(true);
+    setRevealing(true);
+    clearTimeout(revealTimer.current);
+    revealTimer.current = setTimeout(() => setRevealing(false), 1450);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     PastelAudio.startMusic();
     triggerOpeningCelebration();
@@ -74,6 +97,8 @@ export default function Greeting() {
     <>
       <Toast {...toast} />
       <Ambient />
+      {person && <Balloons key={person.full} />}
+      {revealing && <Reveal />}
       <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-40" />
 
       <main className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12 my-auto">

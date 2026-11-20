@@ -114,22 +114,18 @@ body {
 
 @keyframes rise {
     from { opacity: 0; transform: translateY(18px) scale(0.98); }
-    to { opacity: 1; transform: none; }
 }
 .animate-rise {
-    opacity: 0;
-    animation: rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
     animation-delay: var(--d, 0ms);
 }
 
 @keyframes pop {
     0% { opacity: 0; transform: scale(0.88) rotate(-1deg); }
-    60% { transform: scale(1.025) rotate(0.4deg); }
-    100% { opacity: 1; transform: none; }
+    60% { opacity: 1; transform: scale(1.025) rotate(0.4deg); }
 }
 .animate-pop {
-    opacity: 0;
-    animation: pop 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+    animation: pop 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) backwards;
     animation-delay: var(--d, 0ms);
 }
 
@@ -228,7 +224,107 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .animate-rise, .animate-pop { opacity: 1; animation: none; }
-    .doodle { display: none; }
+    .animate-rise, .animate-pop { animation: none; }
+    .doodle, .balloon, .reveal { display: none; }
+    body::before, .btn-sticker::after { animation: none; }
     .washi-tape, .animate-bob, .cta-pulse, .dots i, .eq i, .shimmer, .caret::after { animation: none; }
+}
+
+/* ---------- Page-level motion ---------- */
+body { background-image: none; }
+body::before {
+    content: '';
+    position: fixed;
+    inset: -28px;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        radial-gradient(rgba(243, 190, 156, 0.35) 1.25px, transparent 1.25px),
+        linear-gradient(to right, rgba(169, 223, 177, 0.16) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(169, 223, 177, 0.16) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: 14px 14px, 0 0, 0 0;
+    will-change: transform;
+    animation: gridmove 22s linear infinite;
+}
+@keyframes gridmove {
+    to { transform: translate3d(28px, 28px, 0); }
+}
+
+.btn-sticker { position: relative; overflow: hidden; }
+.btn-sticker::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -70%;
+    width: 40%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+}
+.btn-sticker:hover:not(:disabled)::after { left: 140%; }
+
+.paper-card, .paper-card-mint, .paper-card-peach { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (hover: hover) {
+    .paper-card:hover, .paper-card-mint:hover, .paper-card-peach:hover { transform: translateY(-3px); }
+}
+
+.reveal { position: fixed; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
+.curtain {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50.5%;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.7) 1.6px, transparent 1.6px);
+    background-size: 22px 22px;
+}
+.curtain-l { left: 0; background-color: #FFE5EC; border-right: 3px dashed #F6BDCB; animation: curtain-l 1.4s cubic-bezier(0.7, 0, 0.2, 1) both; }
+.curtain-r { right: 0; background-color: #D8F3DC; border-left: 3px dashed #A9DFB1; animation: curtain-r 1.4s cubic-bezier(0.7, 0, 0.2, 1) both; }
+@keyframes curtain-l {
+    0% { opacity: 0; transform: none; }
+    12%, 40% { opacity: 1; transform: none; }
+    100% { opacity: 1; transform: translateX(-102%); }
+}
+@keyframes curtain-r {
+    0% { opacity: 0; transform: none; }
+    12%, 40% { opacity: 1; transform: none; }
+    100% { opacity: 1; transform: translateX(102%); }
+}
+.reveal-heart {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -42px 0 0 -42px;
+    font-size: 84px;
+    line-height: 1;
+    animation: reveal-heart 1.4s ease both;
+}
+@keyframes reveal-heart {
+    0% { opacity: 0; transform: scale(0.2) rotate(-12deg); }
+    18% { opacity: 1; transform: scale(1.2) rotate(4deg); }
+    30% { transform: scale(0.95) rotate(0deg); }
+    40% { transform: scale(1.08); }
+    55% { opacity: 1; transform: scale(1); }
+    85% { opacity: 0; transform: scale(1.9); }
+    100% { opacity: 0; }
+}
+
+.balloon {
+    position: fixed;
+    bottom: -14vh;
+    left: var(--x);
+    z-index: 20;
+    font-size: var(--s);
+    line-height: 1;
+    filter: hue-rotate(var(--h));
+    pointer-events: none;
+    animation: balloon-up var(--dur) ease-in-out var(--delay) 1 both;
+}
+@keyframes balloon-up {
+    0% { transform: translate3d(0, 0, 0) rotate(-4deg); opacity: 0; }
+    8% { opacity: 1; }
+    50% { transform: translate3d(var(--sway), -60vh, 0) rotate(5deg); }
+    100% { transform: translate3d(calc(var(--sway) * -1), -125vh, 0) rotate(-4deg); opacity: 1; }
 }
